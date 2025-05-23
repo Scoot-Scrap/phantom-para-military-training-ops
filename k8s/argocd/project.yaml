@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: nextjs-project
+  namespace: argocd
+spec:
+  # A human-friendly description of this project
+  description: "GitOps project for Next.js application deployments"  
+  # Git repositories this project is allowed to sync from
+  sourceRepos:
+    - "https://github.com/your-org/your-repo"                           
+  # Where apps in this project may deploy to
+  destinations:
+    - namespace: nextjs                                       
+      server: https://kubernetes.default.svc                  
+
+  # Prevent creation of cluster-scoped resources except Namespace
+  clusterResourceWhitelist:
+    - group: ""                                              
+      kind: Namespace                                       
+
+  # Disallow any other cluster-scoped kinds
+  clusterResourceBlacklist:
+    - group: ""                                              
+      kind: "*" 

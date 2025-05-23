@@ -1,0 +1,17 @@
+name: Feature Flags with LaunchDarkly
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  toggle-feature:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update Feature Flag
+        run: |
+          curl -X PATCH "https://app.launchdarkly.com/api/v2/flags/default/feature-x" \
+            -H "Authorization: ${{ secrets.LAUNCHDARKLY_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            --data '{"on": true}'

@@ -1,0 +1,23 @@
+name: Uptime & Synthetics
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+
+jobs:
+  uptime-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Dashboard Endpoint
+        run: |
+          if ! curl -fsS https://your-custom-domain.com/dashboard; then
+            echo "Dashboard is down"
+            exit 1
+          fi
+
+      - name: Notify Slack on Failure
+        if: failure()
+        run: |
+          curl -X POST -H 'Content-Type: application/json' \
+          --data "{\"text\":\"🚨 Uptime check failed for /dashboard\"}" \
+          ${{ secrets.SLACK_WEBHOOK }}

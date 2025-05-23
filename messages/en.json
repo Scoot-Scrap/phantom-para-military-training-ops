@@ -1,0 +1,12 @@
+{
+  "dashboard.title": "Phantom AR Dashboard",
+  "vitals.label.heartRate": "Heart Rate",
+  "vitals.label.bloodPressure": "Blood Pressure",
+  "vitals.label.oxygenSaturation": "O₂ Saturation",
+  "vitals.label.respiratoryRate": "Respiratory Rate",
+  "vitals.label.skinTemperature": "Skin Temperature",
+  "vitals.label.timestamp": "Timestamp",
+  "widget.overview": "Vitals Overview",
+  "widget.performance": "Performance Chart",
+  "widget.notifications": "Notifications"
+}

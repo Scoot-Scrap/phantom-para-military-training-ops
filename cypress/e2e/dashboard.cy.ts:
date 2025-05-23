@@ -1,0 +1,17 @@
+describe('Dashboard E2E', () => {
+  beforeEach(() => {
+    // Stub the vitals API to return our fixture
+    cy.intercept('GET', '/api/biometric/sampleVitals', { fixture: 'vitals.json' }).as('getVitals');
+  });
+
+  it('should load and display vitals data', () => {
+    cy.visit('/dashboard');
+    cy.wait('@getVitals');
+
+    cy.contains('Heart Rate:').should('contain', '80 bpm');
+    cy.contains('Blood Pressure:').should('contain', '120/80 mmHg');
+    cy.contains('O₂ Saturation:').should('contain', '98 %');
+    cy.contains('Respiratory Rate:').should('contain', '16 breaths/min');
+    cy.contains('Skin Temp:').should('contain', '36.5 °C');
+  });
+});

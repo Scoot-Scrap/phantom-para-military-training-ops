@@ -1,0 +1,45 @@
+# File: .github/workflows/cd-staging.yml
+
+name: CD–Staging
+
+# Trigger on pushes to the develop branch
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  deploy-staging:
+    name: Deploy to Staging Environment
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build for Cloudflare Pages
+        run: npm run pages:build
+
+      - name: Authenticate with Cloudflare
+        env:
+          CF_API_TOKEN: ${{ secrets.CF_STAGING_API_TOKEN }}
+        run: |
+          echo "$CF_API_TOKEN" | wrangler login --token
+
+      - name: Deploy to Staging Pages
+        env:
+          CF_API_TOKEN: ${{ secrets.CF_STAGING_API_TOKEN }}
+        run: |
+          npx wrangler pages deploy \
+            --project-name my-next-app-staging \
+            --branch develop \
+            .vercel/output/static

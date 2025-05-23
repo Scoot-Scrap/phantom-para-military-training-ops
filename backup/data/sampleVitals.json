@@ -1,0 +1,18 @@
+// data/sampleVitals.json
+[
+  {
+    "timestamp": "2025-01-01T12:00:00Z",
+    "heartRate": 72,
+    "spo2": 98,
+    "respirationRate": 16,
+    "bloodPressure": { "systolic": 120, "diastolic": 80 }
+  },
+  {
+    "timestamp": "2025-01-01T12:01:00Z",
+    "heartRate": 74,
+    "spo2": 97,
+    "respirationRate": 15,
+    "bloodPressure": { "systolic": 118, "diastolic": 79 }
+  }
+  // …more entries…
+]

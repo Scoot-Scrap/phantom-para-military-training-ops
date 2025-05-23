@@ -1,0 +1,10 @@
+# File: netlify.toml
+
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+# Use the same build/publish for Deploy Previews
+[context.deploy-preview]
+  command = "npm run build"
+  publish = ".next"

@@ -1,0 +1,32 @@
+name: SBOM Policy Enforcement
+
+on:
+  pull_request:
+
+jobs:
+  policy-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Generate SBOM (Syft)
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh
+          syft . -o cyclonedx-json > sbom.json
+
+      - name: Setup OPA
+        uses: open-policy-agent/setup-opa@v1
+
+      - name: Evaluate SBOM Policy
+        run: |
+          cat > sbom.rego <<EOF
+          package sbom.policy
+          default allow = false
+          allow {
+            not input.components[_].vulnerabilities[_].severity == "CRITICAL"
+          }
+          EOF
+
+          opa eval --format=pretty \
+            --input sbom.json \
+            'data.sbom.policy.allow == true' || exit 1

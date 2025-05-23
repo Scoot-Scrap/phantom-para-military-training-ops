@@ -1,0 +1,20 @@
+# File: kubernetes/hpa.yaml
+
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: nextjs-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: nextjs-deployment   # Replace with your Deployment name
+  minReplicas: 2             # Never scale below 2 pods :contentReference[oaicite:10]{index=10}
+  maxReplicas: 10            # Never scale above 10 pods :contentReference[oaicite:11]{index=11}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 50   # Scale to keep average CPU ~50% :contentReference[oaicite:12]{index=12}

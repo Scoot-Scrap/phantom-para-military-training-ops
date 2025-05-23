@@ -1,0 +1,28 @@
+# Node modules
+node_modules/
+
+# Next.js build outputs
+.next/
+out/
+dist/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# VSCode
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Binaries we no longer track
+kubectl-argo-rollouts-linux-amd64
+kubectl-argo-rollouts-darwin-amd64
+
+# Nested project folders
+phantom-ar-martial-ops/
+phantom-ar-training/
+phantom-para-military-training-ops/

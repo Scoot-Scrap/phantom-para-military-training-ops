@@ -1,0 +1,62 @@
+// components/ObjectDetectionOverlay.jsx
+import React, { useRef, useEffect, useState } from 'react';
+import * as cocoSsd from '@tensorflow-models/coco-ssd';
+import '@tensorflow/tfjs';
+
+export default function ObjectDetectionOverlay(props) {
+  const videoRef = useRef();
+  const [predictions, setPredictions] = useState([]);
+
+  // start camera
+  useEffect(() => {
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(stream => { videoRef.current.srcObject = stream; })
+      .catch(console.error);
+  }, []);
+
+  // load model & predict
+  useEffect(() => {
+-   cocoSsd.load().then(m => {
+-     model = m;
+-     const iv = setInterval(async () => {
+-       const preds = await model.detect(videoRef.current);
+-       const top5 = preds.slice(0, 5);
+-       setPredictions(top5);
+-     }, 500);
+-     return () => clearInterval(iv);
+-   });
++   let model;
++   cocoSsd.load().then(m => {
++     model = m;
++     const iv = setInterval(async () => {
++       const preds = await model.detect(videoRef.current);
++       const top5 = preds.slice(0, 5);
++       setPredictions(top5);
++       props.onDetect && props.onDetect(top5);
++     }, 500);
++     return () => clearInterval(iv);
++   });
+  }, [props]);
+  
+  return (
+    <>
+      <video ref={videoRef} autoPlay muted style={{ display: 'none' }} />
+      <canvas
+        style={{ position:'absolute', top:0, left:0, width:'100%', height:'100%' }}
+        ref={canvas => {
+          if (!canvas) return;
+          const ctx = canvas.getContext('2d');
+          ctx.clearRect(0,0,canvas.width,canvas.height);
+          predictions.forEach(p => {
+            const [x,y,w,h] = p.bbox;
+            ctx.strokeStyle = '#00FF00';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(x, y, w, h);
+            ctx.fillStyle = '#00FF00';
+            ctx.fillText(p.class, x, y>10? y-5 : 10);
+          });
+        }}
+      />
+    </>
+  );
+}

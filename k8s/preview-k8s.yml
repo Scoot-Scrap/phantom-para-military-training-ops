@@ -1,0 +1,22 @@
+# File: .github/workflows/preview-k8s.yml
+
+name: Kubernetes Preview
+
+on:
+  pull_request:
+
+jobs:
+  deploy-preview:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Deploy preview to Kubernetes
+        uses: vendanor/preview-pull-request@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          app-name: my-next-app
+          helm-chart-path: ./charts/next-app
+          docker-username: ${{ github.actor }}
+          docker-password: ${{ secrets.GITHUB_TOKEN }}

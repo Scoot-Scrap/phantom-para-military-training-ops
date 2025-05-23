@@ -1,0 +1,23 @@
+# File: .github/workflows/northflank-preview.yml
+
+name: Northflank Preview
+
+on:
+  pull_request:
+
+jobs:
+  create-preview:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Northflank CLI Login
+        run: nf config set token ${{ secrets.NORTHFLANK_TOKEN }}
+
+      - name: Create Preview Environment
+        run: |
+          nf preview create \
+            --project my-nextjs-app \
+            --branch ${{ github.head_ref }} \
+            --alias preview-${{ github.event.number }}.myapp.dev

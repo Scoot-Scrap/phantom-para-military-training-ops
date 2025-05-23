@@ -1,0 +1,5 @@
+vercel_token     = "YOUR_VERCEL_TOKEN"
+vercel_org_id    = "YOUR_VERCEL_ORG_ID"
+vercel_project_id= "YOUR_VERCEL_PROJECT_ID"
+sentry_dsn       = "https://<key>@sentry.io/<id>"
+ld_client_id     = "YOUR_LAUNCHDARKLY_CLIENT_ID"

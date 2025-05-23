@@ -1,0 +1,22 @@
+# File: .github/workflows/lighthouse.yml
+
+name: Lighthouse CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  lhci:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - run: npm ci
+      - run: npm run build
+      - run: npm install -g @lhci/cli@0.10.x
+      - run: lhci autorun                                           # runs budgets & fails on regressions :contentReference[oaicite:8]{index=8}

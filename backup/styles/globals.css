@@ -1,0 +1,10 @@
+/* File: styles/globals.css */
+
+/* Tailwind’s base styles (resets, defaults) */
+@tailwind base;
+
+/* Any component-level styles you define in Tailwind */
+@tailwind components;
+
+/* All of Tailwind’s utility classes */
+@tailwind utilities;

@@ -1,0 +1,6 @@
+run = "npm install && npm run dev -p 3001"
+language = "nix"
+
+[internalPort]
+port = 3001
+protocol = "http"

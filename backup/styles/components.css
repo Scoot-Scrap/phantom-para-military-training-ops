@@ -1,0 +1,8 @@
+/* Example usage in styles/components.css */
+
+.button {
+  background-color: var(--color-primary, #1E40AF);
+  color: var(--color-bg, #FFFFFF);
+  padding: var(--space-2, 8px) var(--space-3, 16px);
+  border-radius: var(--radius-md, 8px);
+}

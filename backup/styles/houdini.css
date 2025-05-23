@@ -1,0 +1,14 @@
+/* styles/houdini.css */
+
+@layer base {
+  :root {
+    /* ensure paint worklet is available */
+    --stripes-angle: 45deg;
+  }
+
+  /* Apply our paint worklet as a background-image */
+  .paint-stripes {
+    background-image: paint(stripes);
+    background-size: 40px 40px;
+  }
+}

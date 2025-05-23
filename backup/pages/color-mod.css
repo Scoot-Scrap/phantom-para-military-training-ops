@@ -1,0 +1,14 @@
+/* styles/color-mod.css */
+
+/* Fallback for older browsers */
+.button {
+  background-color: var(--color-primary);
+  color: var(--color-bg);
+}
+
+/* Use color-mod for hover shading if supported */
+@supports (background: color-mod(var(--color-primary) lightness(+10%))) {
+  .button:hover {
+    background: color-mod(var(--color-primary) lightness(+10%));
+  }
+}

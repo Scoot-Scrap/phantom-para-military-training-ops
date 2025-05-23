@@ -1,0 +1,62 @@
+# File: .github/workflows/compliance-audit.yml
+
+name: Compliance & Audit Trails
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+
+permissions:
+  id-token: write       # Enable OIDC to GitHub Actions token :contentReference[oaicite:4]{index=4}
+  contents: read
+
+jobs:
+  attest:
+    name: Generate and Sign Attestation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Set up Cosign
+        uses: sigstore/cosign-installer@v3.8.2      # Installs cosign into PATH :contentReference[oaicite:5]{index=5}
+
+      - name: Sign Container Image (keyless)
+        env:
+          COSIGN_EXPERIMENTAL: "1"                  # Enable OIDC keyless signing :contentReference[oaicite:6]{index=6}
+        run: |
+          # Sign the image you built earlier in your CD pipeline:
+          cosign sign --oidc-registry ghcr.io \
+            ghcr.io/${{ github.repository }}/my-app:${{ github.sha }}
+
+      - name: Build Compliance Attestation
+        run: |
+          TIMESTAMP=$(date --utc +%Y-%m-%dT%H:%M:%SZ)
+          cat <<EOF > attestation.json
+          {
+            "repository": "${{ github.repository }}",
+            "commit":     "${{ github.sha }}",
+            "actor":      "${{ github.actor }}",
+            "ref":        "${{ github.ref }}",
+            "timestamp":  "${TIMESTAMP}"
+          }
+          EOF                                      # Captures a verifiable audit record :contentReference[oaicite:7]{index=7}
+
+      - name: Attest Metadata to Transparency Log
+        env:
+          COSIGN_EXPERIMENTAL: "1"
+        run: |
+          # Create an in-toto-style custom attestation
+          cosign attest --predicate attestation.json \
+            --type custom.Attestation \
+            --oidc-registry ghcr.io \
+            ghcr.io/${{ github.repository }}/my-app:${{ github.sha }}  
+
+      - name: Upload Attestation Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: compliance-attestation
+          path: attestation.json                  # Artifact available for auditors :contentReference[oaicite:8]{index=8}

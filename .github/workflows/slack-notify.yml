@@ -1,0 +1,184 @@
+# File: .github/workflows/slack-notify.yml
+
+name: Slack Notifications
+
+# Trigger when any workflow run completes for CI, CD, or CD–Staging
+on:
+  workflow_run:
+    workflows:
+      - CI
+      - CD
+      - CD–Staging
+    types:
+      - completed
+
+jobs:
+  notify:
+    name: Send Slack Notification
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send notification to Slack
+        uses: slackapi/slack-github-action@v1.27.0           # Incoming Webhook technique :contentReference[oaicite:0]{index=0}
+        with:
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook_type: incoming-webhook
+          payload: |
+            text: ":rocket: Workflow *${{ github.workflow }}* has *${{ github.event.workflow_run.conclusion }}* on branch `${{ github.event.workflow_run.head_branch }}`"
+            attachments:
+              - color: ${{ github.event.workflow_run.conclusion == 'success' && 'good' || 'danger' }}
+                blocks:
+                  - type: section
+                    text:
+                      type: mrkdwn
+                      text: |
+                        *Repository:* <${{ github.server_url }}/${{ github.repository }}|${{ github.repository }}>
+                        *Workflow:* ${{ github.workflow }}
+                        *Branch:* `${{ github.event.workflow_run.head_branch }}`
+                        *Commit:* <${{ github.server_url }}/${{ github.repository }}/commit/${{ github.event.workflow_run.head_sha }}|`${{ github.event.workflow_run.head_sha }}`>
+                        *Status:* ${{ github.event.workflow_run.conclusion }}
+                        *Details:* <${{ github.event.workflow_run.html_url }}|View run>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            

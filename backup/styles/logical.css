@@ -1,0 +1,5 @@
+/* Logical margins adapt to LTR/RTL automatically */
+.card {
+  margin-inline-start: var(--space-3);
+  margin-inline-end:   var(--space-2);
+}

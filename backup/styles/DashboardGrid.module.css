@@ -1,0 +1,18 @@
+/* styles/DashboardGrid.module.css */
+
+.gridContainer {
+  padding: var(--spacing-unit);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--spacing-unit);
+}
+
+.card {
+  background: var(--secondary-color);
+  color: var(--background-color);
+  padding: var(--spacing-unit);
+  border-radius: 0.5rem;
+}

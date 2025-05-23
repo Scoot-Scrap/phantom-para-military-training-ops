@@ -1,0 +1,30 @@
+# File: k8s/argocd/applicationset-preview.yaml
+
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: pr-previews
+  namespace: argocd
+spec:
+  generators:
+    - pullRequest:
+        github:
+          owner: your-org                       # GitHub org/user :contentReference[oaicite:9]{index=9}
+          repo: your-repo                        # Repository name :contentReference[oaicite:10]{index=10}
+          tokenRef: github-token                 # Reference to a GitHub token in Argo CD Secret :contentReference[oaicite:11]{index=11}
+  template:
+    metadata:
+      name: preview-{{pullRequest.number}}      # Application name includes PR number :contentReference[oaicite:12]{index=12}
+    spec:
+      project: nextjs-project                   # Argo CD AppProject for previews :contentReference[oaicite:13]{index=13}
+      source:
+        repoURL: https://github.com/your-org/your-repo
+        targetRevision: '{{pullRequest.number}}' # Deploy the exact commit/branch of the PR :contentReference[oaicite:14]{index=14}
+        path: k8s/overlays/preview              # Directory with preview-specific k8s manifests :contentReference[oaicite:15]{index=15}
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: preview-{{pullRequest.number}} # New namespace per preview :contentReference[oaicite:16]{index=16}
+      syncPolicy:
+        automated:
+          prune: true                           # Delete resources when PR closes :contentReference[oaicite:17]{index=17}
+          selfHeal: true                        # Reconcile drift automatically :contentReference[oaicite:18]{index=18}

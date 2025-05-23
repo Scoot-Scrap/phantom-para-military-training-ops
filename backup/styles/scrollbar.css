@@ -1,0 +1,14 @@
+/* 1. Thin, themed scrollbar */
+/* scrollbar-width and scrollbar-color */
+.container { 
+  scrollbar-width: thin; 
+  scrollbar-color: var(--color-primary) var(--color-bg);
+}
+/* WebKit fallback */
+.container::-webkit-scrollbar { width: 8px; }
+.container::-webkit-scrollbar-track { background: var(--color-bg); }
+.container::-webkit-scrollbar-thumb {
+  background-color: var(--color-primary);
+  border-radius: 4px;
+  border: 2px solid var(--color-bg);
+}

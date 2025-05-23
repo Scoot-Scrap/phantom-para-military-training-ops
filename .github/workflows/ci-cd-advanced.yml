@@ -1,0 +1,198 @@
+# File: .github/workflows/ci-cd-advanced.yml
+
+name: Advanced CI/CD & Security
+
+# Trigger on pushes and pull requests to main/develop
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  sbom:
+    name: SBOM Generation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Generate SBOM (Anchore)
+        uses: anchore/sbom-action@v0                            # Anchore SBOM Action :contentReference[oaicite:9]{index=9}
+        with:
+          path: .
+          output: sbom.json
+
+      - name: Generate SBOM (Syft, optional)
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh
+          syft . -o cyclonedx-json > syft-sbom.json              # Syft SBOM generation :contentReference[oaicite:10]{index=10}
+
+      - name: Upload SBOM artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: sbom
+          path: |
+            sbom.json
+            syft-sbom.json
+
+  sign-sbom:
+    name: Sign SBOM with Cosign
+    runs-on: ubuntu-latest
+    needs: sbom
+    permissions:
+      id-token: write                                         # OIDC for Cosign :contentReference[oaicite:11]{index=11}
+    steps:
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3.8.2                 # Sigstore Cosign :contentReference[oaicite:12]{index=12}
+
+      - name: Sign SBOM
+        env:
+          COSIGN_EXPERIMENTAL: '1'                             # Keyless signing
+        run: |
+          cosign sign-blob --keyless sbom.json                 # SBOM signing :contentReference[oaicite:13]{index=13}
+          cosign sign-blob --keyless syft-sbom.json
+
+      - name: Upload SBOM signatures
+        uses: actions/upload-artifact@v3
+        with:
+          name: sbom-signatures
+          path: |
+            sbom.json.sig
+            syft-sbom.json.sig
+
+  slsa-attestation:
+    name: SLSA Level 3 Provenance
+    runs-on: ubuntu-latest
+    needs: sign-sbom
+    permissions:
+      id-token: write
+    steps:
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3.8.2
+
+      - name: Create SLSA provenance
+        env:
+          COSIGN_EXPERIMENTAL: '1'
+        run: |
+          TIMESTAMP=$(date --utc +%Y-%m-%dT%H:%M:%SZ)
+          cat <<EOF > provenance.json
+          {
+            "predicateType": "https://slsa.dev/provenance/v0.2",
+            "buildType": "github-actions",
+            "invocation": {
+              "configSource": {
+                "uri": "https://github.com/${{ github.repository }}",
+                "digest": { "sha1": "${{ github.sha }}" },
+                "entryPoint": ".github/workflows/ci-cd-advanced.yml"
+              },
+              "parameters": {}
+            },
+            "metadata": {
+              "buildStartedOn": "${TIMESTAMP}",
+              "buildFinishedOn": "${TIMESTAMP}"
+            }
+          }
+          EOF
+          cosign attest --predicate provenance.json --type slsa \
+            --keyless ghcr.io/${{ github.repository }}/my-app:${{ github.sha }}
+
+            - name: Upload provenance attestation
+        uses: actions/upload-artifact@v3
+        with:
+          name: slsa-provenance
+          path: provenance.json
+
+  policy‐audit:
+    name: OPA Policy Enforcement
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up OPA CLI
+        uses: open-policy-agent/setup-opa@v1                 # OPA setup :contentReference[oaicite:14]{index=14}
+
+      - name: Evaluate CI/CD security policies
+        run: |
+          # Assumes your Rego policies live under .github/policies/
+          opa eval -f pretty \
+            'data.ci_cd_security.passed == true' \
+            --data .github/policies/CI_CD_Security_Cheat_Sheet.rego
+
+  checkov:
+    name: IaC Scanning with Checkov
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Run Checkov
+        uses: bridgecrewio/checkov-action@v12.1347.0          # Checkov IaC scanning :contentReference[oaicite:15]{index=15}
+        with:
+          soft_fail: false
+          download_external_modules: true
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+  secret‐scan:
+    name: Secret Scanning with Gitleaks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Run Gitleaks
+        uses: zricethezav/gitleaks-action@v8                  # Gitleaks secret scan :contentReference[oaicite:16]{index=16}
+        with:
+          config_path: .gitleaks.toml
+          fail_on_secrets: true
+
+  performance‐regression:
+    name: Performance Regression Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Run k6 performance tests
+        uses: grafana/run-k6-action@v3                         # k6 GitHub Action :contentReference[oaicite:17]{index=17}
+        with:
+          script: k6-load-test.js
+          threshold_error: true
+
+  test‐matrix:
+    name: Test Suites (Unit / Integration / E2E)
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        stage: [unit, integration, e2e]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run ${{ matrix.stage }} tests
+        run: npm run test:${{ matrix.stage }} -- --ci       # Structured test matrix :contentReference[oaicite:18]{index=18}
+
+  pipeline‐audit:
+    name: CI/CD Pipeline Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Fetch OWASP CI/CD Cheat Sheet
+        run: |
+          curl -sSLO https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/CI_CD_Security_Cheat_Sheet.md
+
+      - name: Scan workflows against guidelines
+        run: |
+          # Example: ensure no workflow uses `actions/checkout@v1`
+          grep -R "actions/checkout@v1" -n .github/workflows && exit 1 || echo "No deprecated actions found" :contentReference[oaicite:19]{index=19}

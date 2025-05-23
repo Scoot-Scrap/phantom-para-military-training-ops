@@ -1,0 +1,18 @@
+apiVersion: actions.summerwind.dev/v1alpha1
+kind: RunnerDeployment
+metadata:
+  name: github-runner-deployment
+  namespace: ci
+spec:
+  replicas: 2
+  template:
+    spec:
+      repository: your-org/your-repo
+      tokenSecretName: runner-token
+  autoscaling:
+    minReplicas: 1
+    maxReplicas: 10
+    metrics:
+      cpu:
+        target:
+          averageUtilization: 50

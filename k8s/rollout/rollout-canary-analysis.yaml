@@ -1,0 +1,42 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: nextjs-canary-analysis
+  namespace: nextjs
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: nextjs
+  template:
+    metadata:
+      labels:
+        app: nextjs
+    spec:
+      containers:
+        - name: nextjs
+          image: myregistry/nextjs-app:canary
+          ports:
+            - containerPort: 3000
+  strategy:
+    canary:
+      steps:
+        - setWeight: 10
+        - pause:
+            duration: 2m                         # Allow Prometheus to gather data :contentReference[oaicite:8]{index=8}
+        - analysis:
+            templates:
+              - templateName: success-rate
+                arguments:
+                  - name: service
+                    value: nextjs-service       # Pass Service name into template :contentReference[oaicite:9]{index=9}
+        - setWeight: 50
+        - pause:
+            duration: 2m
+        - analysis:
+            templates:
+              - templateName: success-rate
+                arguments:
+                  - name: service
+                    value: nextjs-service
+        - setWeight: 100                        # Final promotion if analysis passes :contentReference[oaicite:10]{index=10}

@@ -1,0 +1,14 @@
+name: Build & Test
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        required: false
+        default: '18.x'
+
+jobs:
+  lint-test:
+    uses: ./.github/actions/lint-and-test      # Calls the composite action :contentReference[oaicite:3]{index=3}
+    with:
+      node-version: ${{ inputs.node-version }}

@@ -1,0 +1,82 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Biometric API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/biometric/sampleVitals": {
+      "get": {
+        "summary": "Fetch sample vitals",
+        "responses": {
+          "200": {
+            "description": "Sample vitals response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Vitals" }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Update vitals",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/VitalsInput" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated vitals",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Vitals" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Vitals": {
+        "type": "object",
+        "properties": {
+          "timestamp": { "type": "string", "format": "date-time" },
+          "heartRate": { "type": "integer" },
+          "bloodPressure": {
+            "type": "object",
+            "properties": {
+              "systolic": { "type": "integer" },
+              "diastolic": { "type": "integer" }
+            }
+          },
+          "oxygenSaturation": { "type": "integer" },
+          "respiratoryRate": { "type": "integer" },
+          "skinTemperature": { "type": "string" }
+        }
+      },
+      "VitalsInput": {
+        "type": "object",
+        "properties": {
+          "heartRate": { "type": "integer" },
+          "bloodPressure": {
+            "type": "object",
+            "properties": {
+              "systolic": { "type": "integer" },
+              "diastolic": { "type": "integer" }
+            }
+          },
+          "oxygenSaturation": { "type": "integer" },
+          "respiratoryRate": { "type": "integer" },
+          "skinTemperature": { "type": "string" }
+        }
+      }
+    }
+  }
+}

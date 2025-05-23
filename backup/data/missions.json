@@ -1,0 +1,24 @@
+{
+  "scenario": [
+    {
+      "description": "Enemy patrol spotted 300m ahead. Do you engage or evade?",
+      "options": ["Engage", "Evade"],
+      "next": { "Engage": 1, "Evade": 2 }
+    },
+    {
+      "description": "Engagement successful. Proceed to extraction point?",
+      "options": ["Proceed", "Hold position"],
+      "next": { "Proceed": 3, "Hold position": 2 }
+    },
+    {
+      "description": "You are compromised. Attempt exfil or call for QRF?",
+      "options": ["Exfil", "QRF"],
+      "next": { "Exfil": 3, "QRF": null }
+    },
+    {
+      "description": "Mission Complete. Exfil successful.",
+      "options": [],
+      "next": {}
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "version": 2,
+  "builds": [{ "src": "next.config.js", "use": "@vercel/next" }],
+  "routes": [{ "src": "/(.*)", "dest": "/" }],
+  "env": {
+    "SENTRY_DSN": "@sentry_dsn",
+    "NEXT_PUBLIC_LD_CLIENT_ID": "@ld_client_id"
+  },
+  "regions": ["iad1"]
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

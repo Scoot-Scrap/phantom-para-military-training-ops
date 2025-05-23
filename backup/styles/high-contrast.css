@@ -1,0 +1,13 @@
+/* styles/high-contrast.css */
+
+[data-theme="high-contrast"] {
+  --color-bg: #000000;
+  --color-text: #ffffff;
+  --color-primary: #ffff00;
+  --color-secondary: #00ffff;
+}
+
+[data-theme="high-contrast"] button,
+[data-theme="high-contrast"] input {
+  border: 2px solid var(--color-text);
+}

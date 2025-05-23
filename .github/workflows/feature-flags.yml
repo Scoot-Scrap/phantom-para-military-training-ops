@@ -1,0 +1,20 @@
+name: Feature Flag Controlled Deployment
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy-feature:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install LaunchDarkly CLI
+        run: |
+          curl -s https://raw.githubusercontent.com/launchdarkly/ld-find-code-refs/main/install.sh | bash
+
+      - name: Toggle Feature Flag
+        run: |
+          ld toggle --key=${{ secrets.LD_API_KEY }} --project-key=my-app --flag-key=new-ui --on
+
+      - name: Deploy New Feature
+        run: |
+          echo "Deploying new-ui feature..."

@@ -1,0 +1,12 @@
+/* 1. Declare the container */
+.card {
+  container-type: size;
+}
+
+/* 2. Query based on container width */
+@container (min-width: 400px) {
+  .card {
+    padding: var(--space-4);
+    font-size: var(--font-size-lg);
+  }
+}

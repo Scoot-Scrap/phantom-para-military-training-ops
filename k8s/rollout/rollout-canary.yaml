@@ -1,0 +1,36 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: nextjs-canary
+  namespace: nextjs
+spec:
+  replicas: 4
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: nextjs
+  template:
+    metadata:
+      labels:
+        app: nextjs
+    spec:
+      containers:
+        - name: nextjs
+          image: myregistry/nextjs-app:stable
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+  strategy:
+    canary:
+      steps:
+        - setWeight: 10                # Shift 10% of traffic to the new pods :contentReference[oaicite:1]{index=1}
+        - pause: { duration: 60s }      # Pause for observations :contentReference[oaicite:2]{index=2}
+        - setWeight: 30                # Increase to 30% if healthy 
+        - pause: { duration: 60s }
+        - setWeight: 60                # Ramp up to 60% :contentReference[oaicite:4]{index=4}
+        - pause: { duration: 60s }
+        - setWeight: 100               # Finalize at 100% once verified :contentReference[oaicite:5]{index=5}
+      trafficRouting:
+        service:
+          name: nextjs-service
+          port: 80                     # Instructs Argo Rollouts to adjust Service traffic weights :contentReference[oaicite:6]{index=6}

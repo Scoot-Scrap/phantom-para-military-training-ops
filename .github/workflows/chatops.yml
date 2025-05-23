@@ -1,0 +1,34 @@
+name: ChatOps Commands
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  dispatch:
+    name: Dispatch Slash Commands
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Slash Command Dispatch
+        uses: peter-evans/slash-command-dispatch@v2   # Parses /deploy commands and emits repository_dispatch :contentReference[oaicite:1]{index=1}
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          reaction: eyes
+          commands: |
+            /deploy staging
+            /deploy production
+
+  run-deploy:
+    name: Handle Deploy Command
+    runs-on: ubuntu-latest
+    needs: dispatch
+    if: ${{ github.event.action == 'deploy' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Deploy to ${{ github.event.client_payload.environment }}
+        run: |
+          echo "Deploying to ${{ github.event.client_payload.environment }}"
+          # Insert your deploy script here

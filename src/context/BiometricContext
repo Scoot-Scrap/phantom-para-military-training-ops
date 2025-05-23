@@ -1,0 +1,58 @@
+// src/context/BiometricContext.tsx
+import React, { createContext, useState, useEffect, useContext } from 'react';
+
+export interface Biometrics {
+  heartRate: number;
+  oxygenLevel: number;
+  // ...
+}
+
+interface BiometricContextType {
+  normalized: Biometrics[] | null;
+  metrics: Record<string, any> | null;
+  loading: boolean;
+  error: string | null;
+}
+
+const BiometricContext = createContext<BiometricContextType>({
+  normalized: null,
+  metrics: null,
+  loading: true,
+  error: null,
+});
+
+export const BiometricProvider: React.FC = ({ children }) => {
+  const [normalized, setNormalized] = useState<Biometrics[] | null>(null);
+  const [metrics, setMetrics] = useState<Record<string, any> | null>(null);
+  const [loading, setLoading] = useState<boolean>(true); // Initialize loading state :contentReference[oaicite:0]{index=0}
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchBiometrics = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch('/api/biometric/sampleVitals');
+        if (!res.ok) {
+          throw new Error(`API error: ${res.status}`); // Handle non-OK HTTP :contentReference[oaicite:1]{index=1}
+        }
+        const data = await res.json();
+        setNormalized(data.normalized);
+        setMetrics(data.metrics);
+      } catch (err: any) {
+        setError(err.message || 'Unknown error'); // Capture error message :contentReference[oaicite:2]{index=2}
+      } finally {
+        setLoading(false); // Always clear loading :contentReference[oaicite:3]{index=3}
+      }
+    };
+
+    fetchBiometrics();
+  }, []);
+
+  return (
+    <BiometricContext.Provider value={{ normalized, metrics, loading, error }}>
+      {children}
+    </BiometricContext.Provider>
+  );
+};
+
+export const useBiometrics = () => useContext(BiometricContext);

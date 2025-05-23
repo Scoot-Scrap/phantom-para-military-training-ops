@@ -1,0 +1,39 @@
+# File: .github/workflows/release.yml
+
+name: Automated Release
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+
+jobs:
+  semantic-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write       # to create GitHub releases & push back to repo
+      packages: write       # to publish to npm registry
+      id-token: write       # for OIDC auth if needed
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: false      # so semantic-release can push tags
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Semantic Release
+        uses: cycjimmy/semantic-release-action@v4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}   # for GitHub releases & commits :contentReference[oaicite:3]{index=3}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}         # only if publishing to npm :contentReference[oaicite:4]{index=4}

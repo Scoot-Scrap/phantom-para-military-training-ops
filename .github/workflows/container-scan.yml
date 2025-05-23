@@ -1,0 +1,51 @@
+# File: .github/workflows/container-scan.yml
+
+name: Container Image Security Scan
+
+# Trigger on pushes or pull requests to main or develop
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  trivy-scan:
+    name: Scan Docker Image with Trivy
+    runs-on: ubuntu-latest
+
+    # Grant permission to write security events
+    permissions:
+      contents: read
+      security-events: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3                                         # :contentReference[oaicite:0]{index=0}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2                               # :contentReference[oaicite:1]{index=1}
+
+      - name: Build Docker image
+        run: docker build -t my-app:${{ github.sha }} .                  # :contentReference[oaicite:2]{index=2}
+
+      - name: Install Trivy
+        uses: aquasecurity/setup-trivy@v0.2.3                             # :contentReference[oaicite:3]{index=3}
+        with:
+          version: '0.61.0'
+          cache: true
+
+      - name: Scan Docker image
+        uses: aquasecurity/trivy-action@v0.28.0                            # :contentReference[oaicite:4]{index=4}
+        with:
+          scan-type: 'image'
+          image-ref: 'my-app:${{ github.sha }}'
+          format: 'sarif'                                                   # :contentReference[oaicite:5]{index=5}
+          output: 'trivy-report.sarif'
+          severity: 'CRITICAL,HIGH'                                         # Flags only critical/high severities :contentReference[oaicite:6]{index=6}
+          exit-code: '1'                                                    # Fail workflow on detected issues :contentReference[oaicite:7]{index=7}
+
+      - name: Upload Trivy SARIF to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v3                        # :contentReference[oaicite:8]{index=8}
+        with:
+          sarif_file: 'trivy-report.sarif'

@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: nextjs-app
+  namespace: argocd
+spec:
+  project: nextjs-project
+  source:
+    repoURL: "https://github.com/your-org/your-repo"
+    targetRevision: HEAD
+    path: "k8s/overlays/production"                       
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: nextjs                                      
+  syncPolicy:
+    automated:
+      prune: true          # Remove resources no longer defined in Git :contentReference[oaicite:4]{index=4}
+      selfHeal: true       # Reconcile drift automatically :contentReference[oaicite:5]{index=5}
+    syncOptions:
+      - CreateNamespace=true   # Auto-create the 'nextjs' namespace if absent :contentReference[oaicite:6]{index=6}
+      - Validate=true         # Validate manifests against the cluster’s API :contentReference[oaicite:7]{index=7}

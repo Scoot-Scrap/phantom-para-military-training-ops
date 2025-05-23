@@ -1,0 +1,29 @@
+/* styles/typography.css */
+
+/* Fluid typography scale */
+:root {
+  --font-size-xs: clamp(0.75rem, 0.73rem + 0.15vw, 0.875rem);
+  --font-size-sm: clamp(0.875rem, 0.85rem + 0.20vw, 1rem);
+  --font-size-md: clamp(1rem, 0.95rem + 0.30vw, 1.125rem);
+  --font-size-lg: clamp(1.125rem, 1.05rem + 0.40vw, 1.25rem);
+  --font-size-xl: clamp(1.25rem, 1.15rem + 0.50vw, 1.5rem);
+}
+
+/* Apply the scale */
+h1 { font-size: var(--font-size-xl); }
+h2 { font-size: var(--font-size-lg); }
+p  { font-size: var(--font-size-md); }
+
+/* Fluid spacing utilities */
+:root {
+  --gap-xs: clamp(4px, 3px + 0.5vw, 8px);
+  --gap-sm: clamp(8px, 7px + 1vw, 16px);
+  --gap-md: clamp(16px, 14px + 2vw, 24px);
+  --gap-lg: clamp(24px, 20px + 3vw, 32px);
+}
+
+.container {
+  display: grid;
+  grid-gap: var(--gap-md);
+  padding: var(--gap-md);
+}

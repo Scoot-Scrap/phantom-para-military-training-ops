@@ -1,0 +1,17 @@
+# File: docker-compose.yml
+
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      target: runtime                                                   # Use the runtime stage from Dockerfile :contentReference[oaicite:3]{index=3}
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development                                             # Development environment
+    volumes:
+      - .:/app                                                          # Mount source for hot-reloading
+      - /app/node_modules                                               # Persist installed modules
+    command: npm run dev                                               # Run Next.js in dev mode

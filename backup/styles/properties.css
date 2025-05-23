@@ -1,0 +1,19 @@
+/* 1. Declare syntax & initial value */
+@property --accent-blend {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 0;
+}
+
+/* 2. Use in theme transitions */
+:root { --accent-blend: 0; }
+.theme-dark { --accent-blend: 1; }
+
+.element {
+  background: linear-gradient(
+    to right,
+    var(--color-primary) var(--accent-blend),
+    var(--color-secondary)
+  );
+  transition: --accent-blend 0.5s ease;
+}

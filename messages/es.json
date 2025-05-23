@@ -1,0 +1,12 @@
+{
+  "dashboard.title": "Panel de Phantom AR",
+  "vitals.label.heartRate": "Frecuencia Cardíaca",
+  "vitals.label.bloodPressure": "Presión Arterial",
+  "vitals.label.oxygenSaturation": "Saturación de O₂",
+  "vitals.label.respiratoryRate": "Frecuencia Respiratoria",
+  "vitals.label.skinTemperature": "Temperatura de Piel",
+  "vitals.label.timestamp": "Marca de Tiempo",
+  "widget.overview": "Resumen de Signos Vitales",
+  "widget.performance": "Gráfico de Rendimiento",
+  "widget.notifications": "Notificaciones"
+}

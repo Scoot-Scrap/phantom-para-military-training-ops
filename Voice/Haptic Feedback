@@ -1,0 +1,7 @@
+// hook: useFeedback.ts
+export function useFeedback() {
+  return {
+    vibrate: (ms: number) => navigator.vibrate?.(ms),
+    speak: (text: string) => new SpeechSynthesisUtterance(text) && speechSynthesis.speak(new SpeechSynthesisUtterance(text)),
+  };
+}

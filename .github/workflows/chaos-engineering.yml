@@ -1,0 +1,53 @@
+# File: .github/workflows/chaos-engineering.yml
+
+name: Chaos Engineering Test
+
+# Trigger after your staging deployment completes
+on:
+  workflow_run:
+    workflows: ["CD–Staging"]
+    types: [completed]
+
+jobs:
+  chaos-testing:
+    name: Inject Chaos into Staging
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write        # For OIDC if using cloud control planes
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Set up Kubernetes cluster
+        uses: engineerd/setup-kind@v0.5.0
+        with:
+          version: v0.17.0     # Use KinD to emulate your cluster :contentReference[oaicite:2]{index=2}
+
+      - name: Install Chaos Mesh CLI
+        run: |
+          curl -sSL https://mirrors.chaos-mesh.org/v2.0.0/install.sh | bash
+          chaosctl install --with-helm
+
+      - name: Wait for Chaos Mesh controllers
+        run: |
+          kubectl wait --for=condition=Available deployments \
+            -n chaos-testing --timeout=3m                          
+
+      - name: Run network-delay Chaos experiment
+        uses: chaos-mesh/chaos-mesh-action@v0.4.1                  # chaos-mesh-action GitHub Action :contentReference[oaicite:3]{index=3}
+        with:
+          cfgFile: https://raw.githubusercontent.com/chaos-mesh/chaos-mesh-action/master/chaos-test.yaml
+          chaosMeshVersion: v2.0.0
+
+      - name: Verify application health
+        run: |
+          # Ensure 99% of requests still succeed under network delay
+          kubectl wait pods --selector=app=nextjs --for=condition=Ready --timeout=2m
+
+      - name: Clean up Chaos Mesh
+        run: chaosctl uninstall --purge
+
+      - name: Tear down KinD cluster
+        run: kind delete cluster

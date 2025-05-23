@@ -1,0 +1,25 @@
+name: SBOM Policy Check
+
+on:
+  pull_request:
+
+jobs:
+  policy-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install OPA CLI
+        uses: open-policy-agent/setup-opa@v1
+
+      - name: Download SBOM Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: sbom
+
+      - name: Run SBOM Policy
+        run: |
+          opa eval -f pretty \
+            'data.sbom_policies.allow == true' \
+            --data .github/policies/sbom_policies.rego \
+            --input sbom.json

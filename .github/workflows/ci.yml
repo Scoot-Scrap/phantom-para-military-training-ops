@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - name: Install dependencies
+        run: npm ci
+      - name: Build & Analyze
+        run: npm run analyze
+      - name: Run Cypress E2E
+        run: npm run cypress:run
+      - name: Run Accessibility Tests
+        run: npm run cypress:run --spec "cypress/e2e/accessibility.cy.ts"
+      - name: Run Visual Regression Tests
+        run: npm run cypress:run --spec "cypress/e2e/visual.cy.ts"
+      - name: Run Unit Tests
+        run: npm test

@@ -1,0 +1,20 @@
+# File: .github/workflows/uffizzi-preview.yml
+
+name: Uffizzi Preview
+
+on:
+  pull_request:
+
+jobs:
+  create-preview:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Deploy with Uffizzi
+        uses: uffizzi/preview-environments@v2
+        with:
+          api-token: ${{ secrets.UFFIZZI_API_TOKEN }}
+          project: my-uffizzi-project
+          config-file: .uffizzi/preview.yaml

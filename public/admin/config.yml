@@ -1,0 +1,20 @@
+backend:
+  name: github
+  repo: your-github-username/phantom-ar-martial-ops  # ← update to your repo
+  branch: main
+  app_id: "{{ env.GITHUB_APP_ID }}"
+  auth_endpoint: "https://your-domain.com/api/auth/github"
+
+media_folder: "public/uploads"
+public_folder: "/uploads"
+
+collections:
+  - name: "notes"
+    label: "Dashboard Notes"
+    files:
+      - label: "Dashboard"
+        name: "dashboard"
+        file: "content/notes/dashboard.md"
+        fields:
+          - { label: "Title", name: "title", widget: "string" }
+          - { label: "Body",  name: "body",   widget: "markdown" }

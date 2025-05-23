@@ -1,0 +1,20 @@
+# File: wrangler.toml
+
+name = "my-next-app"
+compatibility_date = "2025-05-11"
+type = "javascript"
+
+# Output directory from `npm run pages:build`
+pages_build_output_dir = ".vercel/output/static"
+
+# Set aggressive cache for static assets
+[[headers]]
+for = "/_next/static/*"
+  [headers.values]
+  cache-control = "public, max-age=31536000, immutable"
+
+# Set ISR-style caching for pages
+[[headers]]
+for = "/*"
+  [headers.values]
+  cache-control = "public, s-maxage=60, stale-while-revalidate=30"

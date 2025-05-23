@@ -1,0 +1,23 @@
+# File: .github/workflows/bunnyshell-preview.yml
+
+name: Bunnyshell Preview
+
+on:
+  pull_request:
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Install Bunnyshell CLI
+        run: npm install -g @bunnyshell/cli
+
+      - name: Deploy Preview Environment
+        run: |
+          bunnyshell environments create \
+            --name preview-${{ github.event.number }} \
+            --template nextjs \
+            --branch ${{ github.head_ref }}

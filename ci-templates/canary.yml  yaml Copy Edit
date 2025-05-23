@@ -1,0 +1,23 @@
+name: Canary Deployment
+
+on:
+  workflow_call:
+    inputs:
+      image-tag:
+        required: true
+    secrets:
+      KUBE_CONFIG:
+        required: true
+
+jobs:
+  deploy-canary:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+      - name: Apply Canary
+        run: |
+          kubectl set image deployment/nextjs nextjs=${{ inputs.image-tag }}
+          kubectl argo rollouts set image nextjs-canary nextjs=${{ inputs.image-tag }} --namespace=nextjs

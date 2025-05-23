@@ -1,0 +1,21 @@
+# scripts/artillery.yml
+
+config:
+  target: "https://your-custom-domain.com"
+  phases:
+    - duration: 60
+      arrivalRate: 20
+scenarios:
+  - flow:
+      - get:
+          url: "/api/biometric/sampleVitals"
+      - post:
+          url: "/api/biometric/sampleVitals"
+          json:
+            heartRate: 80
+            bloodPressure:
+              systolic: 120
+              diastolic: 80
+            oxygenSaturation: 98
+            respiratoryRate: 16
+            skinTemperature: "36.5"

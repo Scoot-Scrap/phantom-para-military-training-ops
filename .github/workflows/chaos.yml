@@ -1,0 +1,21 @@
+name: Chaos Engineering Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  chaos-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install LitmusChaos CLI
+        run: |
+          curl -Lo litmusctl https://litmusctl-stable.s3.us-west-2.amazonaws.com/latest/litmusctl-linux-amd64
+          chmod +x litmusctl
+          sudo mv litmusctl /usr/local/bin/
+
+      - name: Run Pod Delete Chaos Experiment
+        run: |
+          litmusctl chaos experiments run \
+            --project-id=your-litmus-project-id \
+            --name=pod-delete \
+            --namespace=litmus

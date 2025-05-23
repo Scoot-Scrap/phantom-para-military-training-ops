@@ -1,0 +1,16 @@
+/* File: styles/fonts.css */
+
+/* 1. Preload critical Latin subset in WOFF2 for minimal payload :contentReference[oaicite:6]{index=6} */
+@font-face {
+  font-family: 'Open Sans';
+  src: url('/fonts/OpenSans-LatinSubset.woff2') format('woff2');
+  font-display: swap;
+  unicode-range: U+0000-00FF;
+}
+
+/* 2. Fallback: full font for broader coverage but loaded later */
+@font-face {
+  font-family: 'Open Sans';
+  src: url('/fonts/OpenSans.woff2') format('woff2');
+  font-display: fallback;
+}

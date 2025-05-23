@@ -1,0 +1,15 @@
+name: License Compliance
+
+on:
+  pull_request:
+
+jobs:
+  license-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Run FOSSA Analysis
+        uses: fossas/fossa-action@v1
+        with:
+          api-key: ${{ secrets.FOSSA_API_KEY }}

@@ -1,0 +1,8 @@
+{
+  "timestamp": "2025-05-15T14:23:45.678Z",
+  "heartRate": 78,
+  "bloodPressure": { "systolic": 118, "diastolic": 82 },
+  "oxygenSaturation": 97,
+  "respiratoryRate": 17,
+  "skinTemperature": "36.7"
+}

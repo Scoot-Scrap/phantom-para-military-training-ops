@@ -1,0 +1,31 @@
+# File: .github/workflows/vercel-preview.yml
+
+name: Vercel Preview
+
+# Trigger on pull requests to any branch
+on:
+  pull_request:
+
+jobs:
+  deploy-preview:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Next.js app
+        run: npm run build
+
+      - name: Deploy to Vercel Preview
+        uses: amondnet/vercel-action@v20
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}        # Vercel token from GitHub Secrets :contentReference[oaicite:1]{index=1}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}      # Your Vercel Organization ID :contentReference[oaicite:2]{index=2}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }} # Your Vercel Project ID :contentReference[oaicite:3]{index=3}
+          vercel-args: "--prod=false"                     # Ensures this is a Preview, not Production :contentReference[oaicite:4]{index=4}
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}

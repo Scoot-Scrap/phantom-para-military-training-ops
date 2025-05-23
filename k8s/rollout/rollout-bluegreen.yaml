@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: nextjs-bluegreen
+  namespace: nextjs
+spec:
+  replicas: 3                             # Run 3 pods per ReplicaSet
+  revisionHistoryLimit: 2                # Keep last 2 revisions
+  selector:
+    matchLabels:
+      app: nextjs
+  template:
+    metadata:
+      labels:
+        app: nextjs
+    spec:
+      containers:
+        - name: nextjs
+          image: myregistry/nextjs-app:{{newVersionTag}}   # Replace with your new image tag
+          ports:
+            - containerPort: 3000
+  strategy:
+    blueGreen:
+      activeService: nextjs-active                  # Service serving live (Blue) pods :contentReference[oaicite:2]{index=2}
+      previewService: nextjs-preview                # Service exposing Green pods for testing :contentReference[oaicite:3]{index=3}
+      autoPromotionEnabled: false                   # Pause before switching traffic :contentReference[oaicite:4]{index=4}

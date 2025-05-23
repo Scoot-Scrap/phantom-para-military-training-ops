@@ -1,0 +1,32 @@
+{
+  "name": "cia-paramilitary-training-simulator",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "three": "^0.155.0",
+    "react-three-fiber": "^8.14.5",
+    "drei": "^9.56.0",
+    "zustand": "^4.3.7"
+  },
+  "devDependencies": {
+    "eslint": "latest",
+    "eslint-config-next": "latest",
+    "commitlint": "^17.7.1",
+    "@commitlint/config-conventional": "^17.7.1",
+    "husky": "^8.0.3"
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  }
+}

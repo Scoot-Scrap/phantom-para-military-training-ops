@@ -1,0 +1,19 @@
+# File: .github/dependabot.yml
+
+version: 2
+updates:
+  # 10.1 Dependency Scanning: npm
+  - package-ecosystem: "npm"             # Use npm ecosystem
+    directory: "/"                       # Root directory of your repository
+    schedule:
+      interval: "daily"                  # Check for updates every day
+      time: "04:00"                      # UTC time to run the check
+    open-pull-requests-limit: 10         # Maximum number of open PRs at once
+    rebase-strategy: "auto"              # Automatically rebase PRs when base changes
+    # Allow minor and patch version updates automatically
+    allow:
+      - dependency-type: "all"
+    # Ignore major version bumps (you can review & upgrade manually)
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]

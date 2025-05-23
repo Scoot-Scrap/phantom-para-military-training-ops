@@ -1,0 +1,39 @@
+/* File: styles/accessibility.css */
+
+/* 5.23 High-Contrast & Forced-Colors Support */
+
+/* When the user’s OS or browser has forced colors (e.g., Windows High Contrast) enabled, apply targeted styles */
+@media (forced-colors: active) {
+  /* 1. Opt into both light and dark UA color schemes for form controls, scrollbars, etc. */
+  :root {
+    color-scheme: light dark;
+  }
+
+  /* 2. Use system color keywords to ensure sufficient contrast on native UI elements */
+  button,
+  input,
+  select,
+  textarea {
+    background-color: ButtonFace;
+    color: ButtonText;
+    border-color: ButtonText;
+  }
+
+  /* 3. Restore author control for non-overridden properties where appropriate */
+  *,
+  *::before,
+  *::after {
+    forced-color-adjust: auto;
+  }
+
+  /* 4. Example: ensure focus outlines remain visible under forced-colors mode */
+  :focus {
+    outline: 2px solid Highlight; /* system highlight color */
+    outline-offset: 2px;
+  }
+
+  /* 5. Example: remove images or box-shadows that may be lost in forced-colors mode */
+  .hero-banner {
+    background-image: none;
+  }
+}
